@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+  game: CollectionEntry<"games">;
+  featured?: boolean;
+};
+
+const { game, featured = false } = Astro.props;
+---
+
+<article class:list={["game-card", { featured }]}>
+  <a class="game-cover" href={`/games/${game.slug}`} aria-label={`查看 ${game.data.title}`}>
+    <img src={game.data.cover} alt={`${game.data.title} cover`} loading={featured ? "eager" : "lazy"} />
+  </a>
+  <div class="game-body">
+    <div class="game-kicker">
+      <span>{game.data.status}</span>
+      <span>{game.data.year}</span>
+      <span>{game.data.engine}</span>
+    </div>
+    <h2><a href={`/games/${game.slug}`}>{game.data.title}</a></h2>
+    <p class="tagline">{game.data.tagline}</p>
+    <p>{game.data.description}</p>
+  </div>
+</article>

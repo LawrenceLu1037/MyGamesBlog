@@ -1,0 +1,323 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import home from "../data/home.json";
+
+const games = (await getCollection("games")).sort((a, b) => b.data.year - a.data.year);
+const gameOptions = games.map((game) => ({
+  slug: game.slug,
+  title: game.data.title,
+}));
+---
+
+<BaseLayout title="内容后台" description="Local content studio for the game portfolio.">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex,nofollow" />
+  </Fragment>
+
+  <section class="admin-shell">
+    <header class="admin-head">
+      <div>
+        <p class="eyebrow">Local Studio</p>
+        <h1>内容后台</h1>
+        <p>新增游戏作品、拆解文章，并编排首页首屏信息。保存前请先选择项目根目录。</p>
+      </div>
+      <div class="admin-actions">
+        <button class="primary-link" type="button" id="pick-root">选择项目目录</button>
+        <span id="root-status">未选择目录</span>
+      </div>
+    </header>
+
+    <nav class="admin-tabs" aria-label="后台面板">
+      <button type="button" class="active" data-tab="home">首页</button>
+      <button type="button" data-tab="game">新增作品</button>
+      <button type="button" data-tab="post">新增文章</button>
+    </nav>
+
+    <section class="admin-panel active" data-panel="home">
+      <form id="home-form" class="admin-form">
+        <label>
+          <span>眉标</span>
+          <input name="eyebrow" value={home.eyebrow} />
+        </label>
+        <label>
+          <span>首页标题</span>
+          <input name="headline" value={home.headline} />
+        </label>
+        <label>
+          <span>简介</span>
+          <textarea name="intro" rows="4">{home.intro}</textarea>
+        </label>
+        <div class="form-grid">
+          <label>
+            <span>主按钮</span>
+            <input name="primaryCta" value={home.primaryCta} />
+          </label>
+          <label>
+            <span>次按钮</span>
+            <input name="secondaryCta" value={home.secondaryCta} />
+          </label>
+        </div>
+        <label>
+          <span>首页封面作品</span>
+          <select name="featuredGame">
+            {gameOptions.map((game) => (
+              <option value={game.slug} selected={home.featuredGame === game.slug}>
+                {game.title} ({game.slug})
+              </option>
+            ))}
+          </select>
+        </label>
+        <button class="primary-link solid" type="submit">保存首页配置</button>
+      </form>
+    </section>
+
+    <section class="admin-panel" data-panel="game">
+      <form id="game-form" class="admin-form">
+        <div class="form-grid">
+          <label>
+            <span>作品名</span>
+            <input name="title" required placeholder="Neon Parry" />
+          </label>
+          <label>
+            <span>Slug</span>
+            <input name="slug" placeholder="neon-parry" />
+          </label>
+        </div>
+        <label>
+          <span>一句话定位</span>
+          <input name="tagline" required placeholder="一击反制驱动的高速动作原型" />
+        </label>
+        <label>
+          <span>作品介绍</span>
+          <textarea name="description" rows="4" required></textarea>
+        </label>
+        <div class="form-grid three">
+          <label>
+            <span>状态</span>
+            <input name="status" value="Prototype" />
+          </label>
+          <label>
+            <span>年份</span>
+            <input name="year" type="number" value="2026" />
+          </label>
+          <label>
+            <span>引擎</span>
+            <input name="engine" value="Unity" />
+          </label>
+        </div>
+        <div class="form-grid">
+          <label>
+            <span>职责</span>
+            <input name="role" value="Design / Programming" />
+          </label>
+          <label>
+            <span>强调色</span>
+            <input name="accent" value="#48f2d5" />
+          </label>
+        </div>
+        <label>
+          <span>封面路径</span>
+          <input name="cover" placeholder="/images/games/example.png" />
+        </label>
+        <label>
+          <span>亮点，每行一条</span>
+          <textarea name="highlights" rows="4"></textarea>
+        </label>
+        <label>
+          <span>链接，每行格式：标签 | 地址</span>
+          <textarea name="links" rows="3" placeholder="Devlog | /posts/example"></textarea>
+        </label>
+        <label>
+          <span>正文</span>
+          <textarea name="body" rows="8" placeholder="## 设计目标"></textarea>
+        </label>
+        <button class="primary-link solid" type="submit">保存作品</button>
+      </form>
+    </section>
+
+    <section class="admin-panel" data-panel="post">
+      <form id="post-form" class="admin-form">
+        <div class="form-grid">
+          <label>
+            <span>文章标题</span>
+            <input name="title" required placeholder="动作游戏反馈拆解" />
+          </label>
+          <label>
+            <span>Slug</span>
+            <input name="slug" placeholder="combat-feedback-breakdown" />
+          </label>
+        </div>
+        <label>
+          <span>摘要</span>
+          <textarea name="description" rows="3" required></textarea>
+        </label>
+        <div class="form-grid">
+          <label>
+            <span>发布日期</span>
+            <input name="pubDate" type="date" required />
+          </label>
+          <label>
+            <span>标签，逗号分隔</span>
+            <input name="tags" value="game-breakdown" />
+          </label>
+        </div>
+        <label>
+          <span>正文</span>
+          <textarea name="body" rows="12" required placeholder="## 核心观点"></textarea>
+        </label>
+        <button class="primary-link solid" type="submit">保存文章</button>
+      </form>
+    </section>
+
+    <section class="admin-output">
+      <h2>输出</h2>
+      <pre id="admin-log">等待操作。</pre>
+    </section>
+  </section>
+
+  <script is:inline>
+    const state = {
+      root: null,
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+    const log = (message) => {
+      $("#admin-log").textContent = message;
+    };
+
+    const today = new Date().toISOString().slice(0, 10);
+    const postDate = document.querySelector('#post-form input[name="pubDate"]');
+    if (postDate) postDate.value = today;
+
+    $$(".admin-tabs button").forEach((button) => {
+      button.addEventListener("click", () => {
+        $$(".admin-tabs button").forEach((item) => item.classList.remove("active"));
+        $$(".admin-panel").forEach((panel) => panel.classList.remove("active"));
+        button.classList.add("active");
+        document.querySelector(`[data-panel="${button.dataset.tab}"]`)?.classList.add("active");
+      });
+    });
+
+    $("#pick-root")?.addEventListener("click", async () => {
+      if (!("showDirectoryPicker" in window)) {
+        log("当前浏览器不支持直接写入目录，会在保存时下载生成文件。建议用 Chrome / Edge 打开 localhost。");
+        return;
+      }
+
+      state.root = await window.showDirectoryPicker({ mode: "readwrite" });
+      $("#root-status").textContent = `已选择：${state.root.name}`;
+      log("目录已授权。保存后会写入 src/content 或 src/data。");
+    });
+
+    const slugify = (value) => {
+      const slug = value
+        .toLowerCase()
+        .trim()
+        .replace(/['"]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+      return slug || `entry-${Date.now()}`;
+    };
+
+    const yamlString = (value) => JSON.stringify(String(value ?? ""));
+    const yamlArray = (items) => `[${items.map((item) => yamlString(item)).join(", ")}]`;
+
+    const lines = (value) =>
+      String(value ?? "")
+        .split(/\r?\n/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+    const parseLinks = (value) =>
+      lines(value)
+        .map((line) => {
+          const [label, ...rest] = line.split("|");
+          return { label: label?.trim(), href: rest.join("|").trim() };
+        })
+        .filter((item) => item.label && item.href);
+
+    const formData = (form) => Object.fromEntries(new FormData(form).entries());
+
+    const writeFile = async (path, content) => {
+      if (!state.root) {
+        download(path.split("/").at(-1), content);
+        return "downloaded";
+      }
+
+      const segments = path.split("/");
+      const filename = segments.pop();
+      let directory = state.root;
+      for (const segment of segments) {
+        directory = await directory.getDirectoryHandle(segment, { create: true });
+      }
+      const file = await directory.getFileHandle(filename, { create: true });
+      const writable = await file.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return "written";
+    };
+
+    const download = (filename, content) => {
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+
+    const gameMarkdown = (data) => {
+      const slug = data.slug || slugify(data.title);
+      const cover = data.cover || `/images/games/${slug}.png`;
+      const links = parseLinks(data.links);
+      const highlights = lines(data.highlights);
+      const body = data.body || "## 设计目标\n\n补充这个作品的设计目标、系统拆解和下一步计划。";
+
+      return {
+        slug,
+        content: `---\ntitle: ${yamlString(data.title)}\ntagline: ${yamlString(data.tagline)}\ndescription: ${yamlString(data.description)}\nstatus: ${yamlString(data.status || "Prototype")}\nrole: ${yamlString(data.role || "Design / Programming")}\nyear: ${Number(data.year || new Date().getFullYear())}\nengine: ${yamlString(data.engine || "Unity")}\ncover: ${yamlString(cover)}\naccent: ${yamlString(data.accent || "#48f2d5")}\nlinks:\n${links.length ? links.map((link) => `  - label: ${yamlString(link.label)}\n    href: ${yamlString(link.href)}`).join("\n") : "  []"}\nhighlights: ${yamlArray(highlights)}\n---\n\n${body.trim()}\n`,
+      };
+    };
+
+    const postMarkdown = (data) => {
+      const slug = data.slug || slugify(data.title);
+      const tags = String(data.tags || "")
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+
+      return {
+        slug,
+        content: `---\ntitle: ${yamlString(data.title)}\ndescription: ${yamlString(data.description)}\npubDate: ${data.pubDate || today}\ntags: ${yamlArray(tags)}\n---\n\n${String(data.body || "").trim()}\n`,
+      };
+    };
+
+    $("#home-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = formData(event.currentTarget);
+      const content = `${JSON.stringify(data, null, 2)}\n`;
+      const result = await writeFile("src/data/home.json", content);
+      log(`${result === "written" ? "已写入" : "已下载"} src/data/home.json\n\n${content}`);
+    });
+
+    $("#game-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const { slug, content } = gameMarkdown(formData(event.currentTarget));
+      const path = `src/content/games/${slug}.md`;
+      const result = await writeFile(path, content);
+      log(`${result === "written" ? "已写入" : "已下载"} ${path}\n\n${content}`);
+    });
+
+    $("#post-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const { slug, content } = postMarkdown(formData(event.currentTarget));
+      const path = `src/content/posts/${slug}.md`;
+      const result = await writeFile(path, content);
+      log(`${result === "written" ? "已写入" : "已下载"} ${path}\n\n${content}`);
+    });
+  </script>
+</BaseLayout>

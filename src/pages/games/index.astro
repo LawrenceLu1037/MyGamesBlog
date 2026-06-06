@@ -1,0 +1,23 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GameCard from "../../components/GameCard.astro";
+
+const games = (await getCollection("games")).sort((a, b) => b.data.year - a.data.year);
+---
+
+<BaseLayout title="Games" description="Game prototypes, design studies, and playable experiments.">
+  <section class="page-head split-head">
+    <div>
+      <p class="eyebrow">Portfolio</p>
+      <h1>游戏作品</h1>
+    </div>
+    <p>
+      这里放游戏原型、系统实验和可玩的项目。每个作品都尽量保留设计目标、技术选择和拆解文章入口。
+    </p>
+  </section>
+
+  <section class="game-grid section-narrow-wide">
+    {games.map((game) => <GameCard game={game} />)}
+  </section>
+</BaseLayout>

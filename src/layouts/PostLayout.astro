@@ -1,0 +1,27 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+const { frontmatter } = Astro.props;
+const date = frontmatter.pubDate.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <article class="article">
+    <a class="back-link" href="/posts">← 所有文章</a>
+    <header class="article-header">
+      <p class="post-meta">
+        <time datetime={frontmatter.pubDate.toISOString()}>{date}</time>
+        {frontmatter.tags?.length > 0 && <span>{frontmatter.tags.join(" / ")}</span>}
+      </p>
+      <h1>{frontmatter.title}</h1>
+      <p>{frontmatter.description}</p>
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

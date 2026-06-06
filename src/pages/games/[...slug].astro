@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const games = await getCollection("games");
+  return games.map((game) => ({
+    params: { slug: game.slug },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+const { Content } = await render(game);
+---
+
+<BaseLayout title={game.data.title} description={game.data.description}>
+  <article class="game-detail" style={`--game-accent: ${game.data.accent}`}>
+    <a class="back-link" href="/games">← 所有作品</a>
+    <header class="game-hero-detail">
+      <div>
+        <p class="eyebrow">{game.data.status} / {game.data.engine}</p>
+        <h1>{game.data.title}</h1>
+        <p class="tagline">{game.data.tagline}</p>
+        <p>{game.data.description}</p>
+        <div class="detail-actions">
+          {game.data.links.map((link) => <a class="primary-link solid" href={link.href}>{link.label}</a>)}
+        </div>
+      </div>
+      <img src={game.data.cover} alt={`${game.data.title} cover`} />
+    </header>
+
+    <section class="fact-strip">
+      <div>
+        <span>Role</span>
+        <strong>{game.data.role}</strong>
+      </div>
+      <div>
+        <span>Year</span>
+        <strong>{game.data.year}</strong>
+      </div>
+      <div>
+        <span>Engine</span>
+        <strong>{game.data.engine}</strong>
+      </div>
+    </section>
+
+    <section class="detail-grid">
+      <aside>
+        <h2>Highlights</h2>
+        <ul>
+          {game.data.highlights.map((item) => <li>{item}</li>)}
+        </ul>
+      </aside>
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+  </article>
+</BaseLayout>

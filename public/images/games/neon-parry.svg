@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Neon Parry cover</title>
+  <desc id="desc">Stylized cyber arena with a character deflecting a glowing strike.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#071417"/>
+      <stop offset="0.55" stop-color="#14272c"/>
+      <stop offset="1" stop-color="#321411"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <path d="M0 602h1280v118H0z" fill="#090f12"/>
+  <path d="M106 575h1068M184 504h912M262 433h756" stroke="#1f6f75" stroke-width="6" opacity=".45"/>
+  <path d="M150 650 580 220M260 672 688 202M1068 650 752 220" stroke="#48f2d5" stroke-width="4" opacity=".28"/>
+  <circle cx="647" cy="360" r="118" fill="none" stroke="#48f2d5" stroke-width="12" filter="url(#glow)"/>
+  <path d="M750 250 936 164 822 335 1082 302 832 410 940 552 728 455" fill="none" stroke="#ffb54c" stroke-width="24" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M586 294c32-20 82-18 110 11 31 33 27 91-9 131-34 37-96 47-139 14-48-37-48-110 38-156z" fill="#101719" stroke="#e8ffff" stroke-width="10"/>
+  <path d="M566 432 426 560M690 424l134 126M610 456l-24 118M664 454l36 116" stroke="#e8ffff" stroke-width="18" stroke-linecap="round"/>
+  <path d="M420 560h180M700 570h162" stroke="#48f2d5" stroke-width="12" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M246 128h390" stroke="#48f2d5" stroke-width="8" opacity=".6"/>
+  <path d="M246 166h260" stroke="#ffb54c" stroke-width="6" opacity=".55"/>
+</svg>

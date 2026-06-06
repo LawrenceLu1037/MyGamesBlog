@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="文章" description="All blog posts.">
+  <section class="page-head">
+    <p class="eyebrow">Breakdowns / Devlogs</p>
+    <h1>文章</h1>
+    <p>游戏机制拆解、关卡设计笔记、开发日志和技术复盘都会沉淀在这里。</p>
+  </section>
+  <section class="post-list section-narrow">
+    {posts.map((post) => <PostCard post={post} />)}
+  </section>
+</BaseLayout>
